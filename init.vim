@@ -51,9 +51,11 @@ set smartcase
 set shortmess+=c
 set inccommand=split
 set completeopt=longest,noinsert,menuone,noselect,preview
-set ttyfast " should make scrolling faster
-set lazyredraw " same as above
-set visualbell " ?
+" should make scrolling faster
+set ttyfast
+" same as above
+set lazyredraw
+set visualbell
 silent !mkdir -p ~/.config/nvim/tmp/backup
 silent !mkdir -p ~/.config/nvim/tmp/undo
 set backupdir=~/.config/nvim/tmp/backup,.
@@ -67,6 +69,9 @@ set updatetime=100
 set virtualedit=block
 
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+
+" alpha
+hi Normal ctermfg=252 ctermbg=none
 
 
 """ terminal behaviors
@@ -123,13 +128,17 @@ vmap Y "+y
 """ select all
 noremap <LEADER>sa ggVG
 
+""" indent
+nnoremap < <<
+nnoremap > >>
+
 """ search
 
 noremap <LEADER><CR> :nohlsearch<CR>
 noremap = nzz
 noremap - Nzz
 
-noremap <LEADER>f :FZF ~<CR>
+noremap <LEADER>F :FZF ~<CR>
 
 
 """ split
@@ -146,6 +155,12 @@ noremap <LEADER>n <c-w>j
 noremap <LEADER>e <c-w>k
 noremap <LEADER>i <c-w>l
 
+noremap <up> :res +5<CR>
+noremap <down> :res -5<CR>
+noremap <left> :vertical res -5<CR>
+noremap <right> :vertical res +5<CR>
+
+
 """ tab contral
 
 noremap tn :tabe<CR>
@@ -155,7 +170,7 @@ noremap ti :+tabnext<CR>
 noremap tmh :-tabmove<CR>
 noremap tml :+tabmove<CR>
 
-" Compile function
+""" Compile function
 noremap <F5> :call CompileRunGcc()<CR>
 func! CompileRunGcc()
 	exec "w"
@@ -167,7 +182,7 @@ func! CompileRunGcc()
 		exec "!g++ -std=c++11 % -Wall -o %<"
 		:sp
 		:res -15
-		:term ./%<
+		:term %<
 	elseif &filetype == 'java'
 		exec "!javac %"
 		exec "!time java %<"
@@ -180,7 +195,7 @@ func! CompileRunGcc()
 	elseif &filetype == 'html'
 		silent! exec "!".g:mkdp_browser." % &"
 	elseif &filetype == 'markdown'
-		exec "InstantMarkdownPreview"
+		:MarkdownPreview
 	elseif &filetype == 'tex'
 		silent! exec "VimtexStop"
 		silent! exec "VimtexCompile"
@@ -198,6 +213,18 @@ func! CompileRunGcc()
 	endif
 endfunc
 
+
+""" auto pair for markdown
+
+" Bold
+vmap <M-b> c****<esc>hhp
+" Italy
+vmap <M-i> c**<esc>hp
+" Code Block
+vmap <M-]> c```<CR>```<esc>epe
+" Code inline
+vmap <M-i> c``<esc>hp
+
 """ ===== Plugins =====
 
 call plug#begin('~/.config/nvim/plugged')
@@ -208,9 +235,12 @@ Plug 'junegunn/fzf', {'do': { -> fzf#install()}}
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'}
+
 call plug#end()
 
 """ ===== Plugin Settings =====
+
 
 """ coc.nvim
 
@@ -284,6 +314,7 @@ nmap <silent> <leader>a :<C-u>set operatorfunc=<SID>cocActionsOpenFromSelected<C
 
 
 let g:coc_global_extensions = [
+	\ 'coc-markdownlint',
 	\ 'coc-json',
 	\ 'coc-explorer',
 	\ 'coc-vimlsp',
@@ -292,6 +323,15 @@ let g:coc_global_extensions = [
 	\ 'coc-python']
 
 nmap tt :CocCommand explorer<CR>
+
+" noremap <leader>f :CocCommand markdownlint.fixAll<CR>
+
+
+""" markdown-preview.nvim
+
+nmap <C-s> <Plug>MarkdownPreview
+nmap <M-s> <Plug>MarkdownPreviewStop
+nmap <C-p> <Plug>MarkdownPreviewToggle
 
 """ ===== End of Plugin Settings =====
 
