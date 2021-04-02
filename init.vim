@@ -14,8 +14,7 @@ source ~/.config/nvim/_machine_specific.vim
 
 """ editor behavior
 
-colorscheme darkblue
-set background=light
+colorscheme desert
 syntax enable
 
 filetype plugin on
@@ -23,7 +22,7 @@ filetype plugin on
 set number
 set relativenumber
 set cursorline
-set noexpandtab
+set expandtab
 set tabstop=4
 set shiftwidth=4
 set softtabstop=4
@@ -129,8 +128,8 @@ vmap Y "+y
 noremap <LEADER>sa ggVG
 
 """ indent
-nnoremap < <<
-nnoremap > >>
+" nnoremap < <<
+" nnoremap > >>
 
 """ search
 
@@ -182,7 +181,7 @@ func! CompileRunGcc()
 		exec "!g++ -std=c++11 % -Wall -o %<"
 		:sp
 		:res -15
-		:term %<
+		exec "!time ./%<"
 	elseif &filetype == 'java'
 		exec "!javac %"
 		exec "!time java %<"
@@ -214,6 +213,21 @@ func! CompileRunGcc()
 endfunc
 
 
+""" auto pair
+
+vmap <leader>s( c()<esc>hp
+vmap <leader>s) c()<esc>hp
+vmap <leader>s[ c[]<esc>hp
+vmap <leader>s] c[]<esc>hp
+vmap <leader>s{ c{}<esc>hp
+vmap <leader>s} c{}<esc>hp
+
+""" next/prev position
+
+nnoremap <leader><leader>o <c-o>
+nnoremap <leader><leader>i <c-i>
+
+
 """ auto pair for markdown
 
 " Bold
@@ -221,9 +235,10 @@ vmap <M-b> c****<esc>hhp
 " Italy
 vmap <M-i> c**<esc>hp
 " Code Block
-vmap <M-]> c```<CR>```<esc>epe
+nmap <M-`> k```<CR>```<esc>eA
 " Code inline
-vmap <M-i> c``<esc>hp
+vmap <M-[> c``<esc>hp
+
 
 """ ===== Plugins =====
 
